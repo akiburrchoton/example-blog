@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'authentication.apps.AuthenticationConfig',
     'posts.apps.PostsConfig',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,6 +84,9 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK= {
+    'NON_FIELD_ERRORS_KEY': 'error'
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
