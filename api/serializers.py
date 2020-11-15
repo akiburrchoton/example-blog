@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.contrib import auth
 
 # Register serializer
 class Register_Serializer(serializers.ModelSerializer):
@@ -26,7 +27,9 @@ class Register_Serializer(serializers.ModelSerializer):
         password2 = self.validated_data['password2']
         
         if password != password2 :
-            raise serializers.ValidationError({'password': 'Passwords Must Match!'})
+            raise serializers.ValidationError(
+                {'password': 'Passwords Must Match!'}
+            )
         
         
         new_user.set_password(password)
@@ -35,6 +38,32 @@ class Register_Serializer(serializers.ModelSerializer):
         return new_user
 
 class Login_Serializer(serializers.ModelSerializer):
-    
-    def post(self, request):
-        pass
+    username = serializers.CharField(max_length=128,min_length=3)
+    email = serializers.EmailField(max_length=255, min_length=3)
+    password = serializers.CharField(max_length=68, min_length=3)
+    tokens = serializers.CharField(max_length=128, min_length=6, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username','email','password','tokens']
+        extra_kwargs = {
+            'password':{'write_only': True},
+        }
+
+    def validate(self, request):
+        email = request.get('email', '')
+        password = request.get('password', '')
+        
+        # Checks if user is authenticated 
+        user = auth.authenticate(email=email, password=password)
+
+       
+        if user is None:
+            raise serializers.ValidationError(
+                {'Error' : 'Wrong information'}
+            )
+
+        return {
+            'email' : user.email,
+            'token' : user.tokens(),
+        }

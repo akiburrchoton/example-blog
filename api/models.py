@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserManager(BaseUserManager):
 
@@ -13,3 +14,11 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save()
         return user
+
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+
+        return{
+            'refresh':str(refresh),
+            'access': str(tokens.access_token)
+        }

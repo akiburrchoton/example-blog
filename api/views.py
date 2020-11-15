@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import Register_Serializer
+from .serializers import *
 from django.shortcuts import render, redirect
 # LOGIN VIEW ENDPOINT
 
@@ -31,8 +31,14 @@ def login_Api(request):
     serializer = Login_Serializer(data=request.data)
     data = {}
 
-    if not serializer.is_valid():
+    if serializer.is_valid():
+        data['response'] = "User logged in  successfully"
+    else:  
         data = serializer.errors
 
-    email = serializer.get('email', '')
-    password = serializer.get('password', '')
+    
+    # data['token'] = serializer.tokens
+    # print(data)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
